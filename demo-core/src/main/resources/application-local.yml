@@ -1,0 +1,38 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    hikari:
+      driver-class-name: org.h2.Driver
+      maximum-pool-size: 5
+      max-lifetime: 600000
+      connection-timeout: 15000
+      validation-timeout: 5000
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      mode: embedded
+      schema-locations: classpath:db/sql/batch-postgresql-metadata-schema.sql
+  jpa:
+    show-sql: true
+    properties:
+      "[hibernate.format_sql]": true
+  batch:
+    job:
+      enabled: false
+      name: ${job.name:NONE}
+    jdbc:
+      initialize-schema: never
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false

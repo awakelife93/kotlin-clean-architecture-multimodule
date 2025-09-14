@@ -1,0 +1,6 @@
+webhook:
+  enabled: true
+  slack:
+    url: ""
+  discord:
+    url: ""

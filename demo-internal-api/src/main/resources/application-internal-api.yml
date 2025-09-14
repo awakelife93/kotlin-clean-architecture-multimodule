@@ -1,0 +1,17 @@
+springdoc:
+  show-actuator: true
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /swagger.html
+    groups-order: DESC
+    tags-sorter: alpha
+    operations-sorter: method
+    display-request-duration: true
+    disable-swagger-default-url: true
+    doc-expansion: none
+  api-docs:
+    path: /api-docs
+  cache:
+    disabled: true
+  model-and-view-allowed: true

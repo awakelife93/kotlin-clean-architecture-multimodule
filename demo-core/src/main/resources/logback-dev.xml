@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [%X{requestId:-system}] %X{method:-} %X{uri:-} %X{clientIp:-} %X{status:-} %X{duration:-} - %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/application.log</file>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [%X{requestId:-system}] %X{method:-} %X{uri:-} %X{clientIp:-} %X{status:-} %X{duration:-} - %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>logs/backup/application.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+			<maxFileSize>100MB</maxFileSize>
+			<maxHistory>60</maxHistory>
+			<totalSizeCap>10GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/error.log</file>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [%X{requestId:-system}] %X{method:-} %X{uri:-} %X{clientIp:-} %X{error:-} - %msg%n%ex</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/backup/error.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+			<maxHistory>60</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="com" level="DEBUG" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE"/>
+		<appender-ref ref="ERROR_FILE"/>
+	</logger>
+
+	<logger name="org.springframework" level="INFO"/>
+	<logger name="org.springframework.orm.jpa" level="INFO"/>
+	<logger name="org.springframework.jdbc" level="INFO"/>
+	<logger name="org.hibernate" level="INFO"/>
+	<logger name="org.hibernate.SQL" level="INFO"/>
+	<logger name="org.hibernate.type.descriptor.sql" level="WARN"/>
+	<logger name="com.zaxxer.hikari" level="INFO"/>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE"/>
+		<appender-ref ref="ERROR_FILE"/>
+	</root>
+</included>

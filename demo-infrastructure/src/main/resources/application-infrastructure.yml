@@ -1,0 +1,16 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+        exclude: env, heapdump, threaddump, configprops, flyway, loggers, liquibase, mappings, scheduledtasks, sessions, shutdown, jolokia, logfile
+  endpoint:
+    prometheus:
+      access: READ_ONLY
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+    info:
+      access: READ_ONLY
+    metrics:
+      access: READ_ONLY

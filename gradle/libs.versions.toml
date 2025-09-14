@@ -1,0 +1,204 @@
+[versions]
+# Core
+kotlin = "2.0.21"
+
+# Spring
+spring-boot = "3.5.5"
+spring-dependency-management = "1.1.7"
+spring-kafka = "3.3.9"
+
+# Database
+postgresql = "42.7.4"
+h2 = "2.3.232"
+flyway = "11.0.0"
+querydsl = "7.0"
+jakarta-annotation = "3.0.0"
+jakarta-persistence = "3.2.0"
+
+# Security
+jjwt = "0.12.6"
+
+# External Integrations
+slack = "1.45.3"
+
+# Monitoring & Logging
+kotlin-logging = "7.0.0"
+sentry = "7.17.0"
+micrometer = "1.14.1"
+
+# Documentation
+springdoc = "2.8.13"
+
+# Testing
+kotest = "5.9.1"
+kotest-extension = "1.3.0"
+mockk = "1.13.14"
+springmockk = "4.0.2"
+mockito-kotlin = "5.4.0"
+mockito-inline = "5.2.0"
+
+# Code Quality
+ktlint-gradle = "12.1.2"
+detekt = "1.23.8"
+
+
+[libraries]
+# Kotlin Core
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
+# Spring Boot Core
+spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
+
+# Spring Boot Web
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+
+# Spring Boot Security
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+
+# Spring Boot Data
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+
+# Spring Boot Others
+spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail" }
+spring-boot-starter-batch = { module = "org.springframework.boot:spring-boot-starter-batch" }
+spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref = "spring-kafka" }
+
+# Database Drivers
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+
+# Database Migration
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+
+# QueryDSL
+querydsl-jpa = { module = "io.github.openfeign.querydsl:querydsl-jpa", version.ref = "querydsl" }
+querydsl-apt = { module = "io.github.openfeign.querydsl:querydsl-apt", version.ref = "querydsl" }
+jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakarta-annotation" }
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
+
+# Security - JWT
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+
+# Serialization
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+
+# Logging
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+
+# Documentation
+springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+
+# Monitoring
+sentry-spring-boot = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
+sentry-logback = { module = "io.sentry:sentry-logback", version.ref = "sentry" }
+micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+
+# External APIs
+slack-api-client = { module = "com.slack.api:slack-api-client", version.ref = "slack" }
+
+# Testing - Spring
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-security-test = { module = "org.springframework.security:spring-security-test" }
+spring-batch-test = { module = "org.springframework.batch:spring-batch-test" }
+
+# Testing - Kotest
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-extensions-spring = { module = "io.kotest.extensions:kotest-extensions-spring", version.ref = "kotest-extension" }
+
+# Testing - Mock
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
+
+
+[bundles]
+# Core Bundles
+kotlin-core = [
+	"kotlin-stdlib",
+	"kotlin-reflect",
+	"jackson-module-kotlin"
+]
+
+# Spring Bundles
+spring-web = [
+	"spring-boot-starter-web",
+	"spring-boot-starter-validation"
+]
+
+spring-security = [
+	"spring-boot-starter-security"
+]
+
+spring-data = [
+	"spring-boot-starter-data-jpa",
+	"spring-boot-starter-data-redis"
+]
+
+# Database Bundles
+database-postgresql = [
+	"postgresql",
+	"flyway-core",
+	"flyway-database-postgresql"
+]
+
+database-h2 = [
+	"h2"
+]
+
+# Monitoring Bundles
+monitoring = [
+	"spring-boot-starter-actuator",
+	"micrometer-prometheus"
+]
+
+sentry = [
+	"sentry-spring-boot",
+	"sentry-logback"
+]
+
+# Testing Bundles
+test-spring = [
+	"spring-boot-starter-test",
+	"spring-security-test"
+]
+
+test-kotest = [
+	"kotest-runner-junit5",
+	"kotest-assertions-core",
+	"kotest-extensions-spring"
+]
+
+test-mock = [
+	"mockk",
+	"springmockk",
+	"mockito-kotlin",
+	"mockito-inline"
+]
+
+
+[plugins]
+# Kotlin Plugins
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+
+# Spring Plugins
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+
+# Code Quality Plugins
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

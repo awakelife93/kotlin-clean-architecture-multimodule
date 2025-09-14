@@ -1,0 +1,37 @@
+spring:
+  config:
+    activate:
+      on-profile: common
+    import:
+      - "optional:classpath:application-bootstrap.yml"
+      - "optional:classpath:application-internal-api.yml"
+      - "optional:classpath:application-external-api.yml"
+      - "optional:classpath:application-infrastructure.yml"
+  mvc:
+    log-resolved-exception: false
+  web:
+    resources.add-mappings: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  jpa:
+    open-in-view: false
+    generate-ddl: false
+    properties:
+      "[hibernate.jdbc.time_zone]": UTC
+  http:
+    reactiveclient:
+      connector: reactor
+      connect-timeout: 3s
+      read-timeout: 5s
+      redirects: dont-follow
+server:
+  servlet:
+    encoding:
+      force-response: true
+  error:
+    include-exception: false
+    include-message: always
+    include-stacktrace: ON_PARAM
+    whitelabel.enabled: false
+  port: 8085

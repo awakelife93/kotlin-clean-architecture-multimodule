@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - [%X{requestId:-system}] %X{method:-}
+				%X{uri:-} %X{clientIp:-} %X{status:-} %X{duration:-} - %msg%n
+			</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<logger name="com" level="DEBUG" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+	</logger>
+
+	<logger name="org.springframework" level="INFO"/>
+	<logger name="org.springframework.orm.jpa" level="DEBUG"/>
+	<logger name="org.springframework.jdbc" level="DEBUG"/>
+	<logger name="org.hibernate" level="INFO"/>
+	<logger name="org.hibernate.SQL" level="DEBUG"/>
+	<logger name="org.hibernate.type.descriptor.sql" level="TRACE"/>
+	<logger name="com.zaxxer.hikari" level="INFO"/>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+</included>

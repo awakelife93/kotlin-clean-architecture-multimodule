@@ -1,0 +1,46 @@
+style:
+  MagicNumber:
+    active: false
+  MaxLineLength:
+    active: true
+    maxLineLength: 170
+  UnusedPrivateMember:
+    active: true
+  UnusedPrivateProperty:
+    active: true
+
+build:
+  maxIssues: 0
+  excludeCorrectable: true
+
+config:
+  validation: true
+  warningsAsErrors: true
+
+complexity:
+  active: true
+  LongMethod:
+    active: false
+  LongParameterList:
+    active: true
+    functionThreshold: 10
+    constructorThreshold: 10
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    ignoreAnnotatedParameter: [ ]
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 10
+    thresholdInClasses: 20
+    thresholdInInterfaces: 10
+    thresholdInObjects: 20
+    thresholdInEnums: 5
+    ignoreDeprecated: true
+    ignorePrivate: true
+    ignoreOverridden: false
+
+performance:
+  SpreadOperator:
+    active: true
+    excludes:
+      - "**/DemoApplication.kt"

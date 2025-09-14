@@ -1,0 +1,33 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+      maximum-pool-size: 10
+      max-lifetime: 600000
+      connection-timeout: 15000
+      validation-timeout: 5000
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+  batch:
+    job:
+      enabled: false
+      name: ${job.name:NONE}
+    jdbc:
+      initialize-schema: never
+  mail:
+    host:
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+sentry:
+  dsn:
+  logging:
+    minimum-event-level: DEBUG

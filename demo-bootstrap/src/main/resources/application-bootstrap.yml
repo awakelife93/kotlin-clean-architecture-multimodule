@@ -1,0 +1,9 @@
+sentry:
+  traces-sample-rate: 1.0
+  exception-resolver-order: -2147483647
+  max-request-body-size: always
+  send-default-pii: true
+  logging:
+    minimum-event-level: ERROR
+    minimum-breadcrumb-level: DEBUG
+    enabled: true

@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7.0.5
+    container_name: redis
+    ports:
+      - "6379:6379"
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    command: redis-server --port 6379
