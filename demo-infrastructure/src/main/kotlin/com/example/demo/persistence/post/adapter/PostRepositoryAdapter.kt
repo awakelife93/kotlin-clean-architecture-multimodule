@@ -2,6 +2,7 @@ package com.example.demo.persistence.post.adapter
 
 import com.example.demo.persistence.post.mapper.PostMapper
 import com.example.demo.persistence.post.repository.PostJpaRepository
+import com.example.demo.post.exception.PostNotFoundException
 import com.example.demo.post.model.Post
 import com.example.demo.post.port.PostPort
 import org.springframework.data.domain.Page
@@ -16,15 +17,13 @@ class PostRepositoryAdapter(
 ) : PostPort {
 	override fun save(post: Post): Post {
 		val entity =
-			if (post.id == 0L) {
-				postMapper.toEntity(post)
+			if (post.id != 0L) {
+				val existingEntity =
+					postJpaRepository.findByIdOrNull(post.id)
+						?: throw PostNotFoundException(post.id)
+				postMapper.updateEntity(existingEntity, post)
 			} else {
-				val existingEntity = postJpaRepository.findByIdOrNull(post.id)
-				if (existingEntity != null) {
-					postMapper.updateEntity(existingEntity, post)
-				} else {
-					postMapper.toEntity(post)
-				}
+				postMapper.toEntity(post)
 			}
 
 		val savedEntity = postJpaRepository.save(entity)
