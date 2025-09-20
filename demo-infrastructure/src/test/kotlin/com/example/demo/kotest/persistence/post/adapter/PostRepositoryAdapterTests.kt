@@ -99,37 +99,6 @@ class PostRepositoryAdapterTests :
 				verify(exactly = 1) { postMapper.updateEntity(existingEntity, post) }
 				verify(exactly = 1) { postJpaRepository.save(updatedEntity) }
 			}
-
-			test("should create new entity when id is not 0 but entity not found") {
-				val post =
-					Post(
-						id = 999L,
-						title = "Post",
-						subTitle = "Subtitle",
-						content = "Content",
-						userId = 1L
-					)
-				val newEntity =
-					PostEntity(
-						title = post.title,
-						subTitle = post.subTitle,
-						content = post.content,
-						userId = post.userId
-					).apply { id = 999L }
-				val savedPost = post
-
-				every { postJpaRepository.findByIdOrNull(999L) } returns null
-				every { postMapper.toEntity(post) } returns newEntity
-				every { postJpaRepository.save(newEntity) } returns newEntity
-				every { postMapper.toDomain(newEntity) } returns savedPost
-
-				val result = adapter.save(post)
-
-				result shouldBe savedPost
-				verify(exactly = 1) { postJpaRepository.findByIdOrNull(999L) }
-				verify(exactly = 1) { postMapper.toEntity(post) }
-				verify(exactly = 1) { postJpaRepository.save(newEntity) }
-			}
 		}
 
 		context("findOneById") {

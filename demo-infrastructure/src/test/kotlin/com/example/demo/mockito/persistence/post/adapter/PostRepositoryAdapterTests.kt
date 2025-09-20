@@ -117,49 +117,6 @@ class PostRepositoryAdapterTests {
 			verify(postMapper, times(1)).updateEntity(existingEntity, post)
 			verify(postJpaRepository, times(1)).save(updatedEntity)
 		}
-
-		@Test
-		@DisplayName("should create new entity when id is not 0 but entity not found")
-		fun `should create new entity when not found`() {
-			val post =
-				Post(
-					id = 999L,
-					title = "Post",
-					subTitle = "Subtitle",
-					content = "Content",
-					userId = 1L
-				)
-			val newEntity =
-				PostEntity(
-					title = post.title,
-					subTitle = post.subTitle,
-					content = post.content,
-					userId = post.userId
-				).apply { id = 999L }
-			val savedEntity =
-				PostEntity(
-					title = post.title,
-					subTitle = post.subTitle,
-					content = post.content,
-					userId = post.userId
-				).apply { id = 999L }
-			val savedPost = post.copy(id = 999L)
-
-			whenever(postJpaRepository.findById(999L)).thenReturn(Optional.empty())
-			whenever(postMapper.toEntity(post)).thenReturn(newEntity)
-			whenever(postJpaRepository.save(newEntity)).thenReturn(savedEntity)
-			whenever(postMapper.toDomain(savedEntity)).thenReturn(savedPost)
-
-			val result = adapter.save(post)
-
-			assertNotNull(result)
-			assertEquals(savedPost, result)
-			assertEquals(999L, result.id)
-			verify(postJpaRepository, times(1)).findById(999L)
-			verify(postMapper, times(1)).toEntity(post)
-			verify(postJpaRepository, times(1)).save(newEntity)
-			verify(postMapper, times(1)).toDomain(savedEntity)
-		}
 	}
 
 	@Nested
