@@ -28,56 +28,24 @@ object HttpUtils {
 			"::1"
 		)
 
-	fun getClientIp(request: HttpServletRequest): String {
-		val proxyIp = getIpFromProxyHeaders(request)
-		if (proxyIp != null) {
-			return proxyIp
+	fun getClientIp(request: HttpServletRequest): String = getIpFromProxyHeaders(request) ?: request.remoteAddr.takeIf(::isValidIp) ?: "unknown"
+
+	private fun getIpFromProxyHeaders(request: HttpServletRequest): String? =
+		PROXY_HEADERS.firstNotNullOfOrNull { header ->
+			request.getHeader(header)?.let { extractFirstIp(it) }?.takeIf(::isValidIp)
 		}
 
-		val remoteAddr = request.remoteAddr
-		return if (isValidIp(remoteAddr)) {
-			remoteAddr
-		} else {
-			"unknown"
-		}
-	}
+	private fun extractFirstIp(headerValue: String): String = headerValue.substringBefore(",").trim()
 
-	private fun getIpFromProxyHeaders(request: HttpServletRequest): String? {
-		for (headerName in PROXY_HEADERS) {
-			val headerValue = request.getHeader(headerName) ?: continue
-
-			val ip = extractFirstIp(headerValue)
-
-			if (isValidIp(ip)) {
-				return ip
-			}
-		}
-		return null
-	}
-
-	private fun extractFirstIp(headerValue: String): String =
-		if (headerValue.contains(",")) {
-			headerValue.split(",")[0].trim()
-		} else {
-			headerValue.trim()
-		}
-
-	private fun isValidIp(ip: String?): Boolean {
-		if (ip.isNullOrBlank()) return false
-		return !INVALID_IP_VALUES.contains(ip.lowercase())
-	}
+	private fun isValidIp(ip: String?): Boolean = ip?.isNotBlank() == true && ip.lowercase() !in INVALID_IP_VALUES
 
 	fun getUserAgent(
 		request: HttpServletRequest,
 		maxLength: Int? = null
-	): String {
-		val userAgent = request.getHeader("User-Agent") ?: return "unknown"
-		return if (maxLength != null && userAgent.length > maxLength) {
-			userAgent.take(maxLength) + "..."
-		} else {
-			userAgent
-		}
-	}
+	): String =
+		request.getHeader("User-Agent")?.let { ua ->
+			maxLength?.let { if (ua.length > it) ua.take(it) + "..." else ua } ?: ua
+		} ?: "unknown"
 
 	fun getFullUrl(request: HttpServletRequest): String =
 		buildString {
@@ -85,28 +53,17 @@ object HttpUtils {
 			request.queryString?.let { append("?$it") }
 		}
 
-	fun isAjaxRequest(request: HttpServletRequest): Boolean {
-		val requestedWith = request.getHeader("X-Requested-With")
-		return "XMLHttpRequest" == requestedWith
-	}
+	fun isAjaxRequest(request: HttpServletRequest): Boolean = request.getHeader("X-Requested-With") == "XMLHttpRequest"
 
-	fun isJsonRequest(request: HttpServletRequest): Boolean {
-		val contentType = request.contentType ?: return false
-		return contentType.contains("application/json", ignoreCase = true)
-	}
+	fun isJsonRequest(request: HttpServletRequest): Boolean = request.contentType?.contains("application/json", ignoreCase = true) == true
 
 	fun getReferer(request: HttpServletRequest): String? = request.getHeader("Referer")
 
-	fun isProxiedRequest(request: HttpServletRequest): Boolean =
-		PROXY_HEADERS.any { headerName ->
-			request.getHeader(headerName) != null
-		}
+	fun isProxiedRequest(request: HttpServletRequest): Boolean = PROXY_HEADERS.any { request.getHeader(it) != null }
 
 	fun getProxyHeaders(request: HttpServletRequest): Map<String, String> =
 		PROXY_HEADERS
-			.mapNotNull { headerName ->
-				request.getHeader(headerName)?.let { headerValue ->
-					headerName to headerValue
-				}
+			.mapNotNull { header ->
+				request.getHeader(header)?.let { header to it }
 			}.toMap()
 }
