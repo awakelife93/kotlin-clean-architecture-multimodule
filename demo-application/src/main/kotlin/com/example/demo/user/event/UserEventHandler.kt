@@ -34,11 +34,9 @@ class UserEventHandler(
 			val future = mailKafkaTemplate.send(KafkaTopicMetaProvider.MAIL_TOPIC, payload)
 
 			future.whenComplete { result, exception ->
-				if (exception != null) {
-					logger.error(exception) { "Failed to send to Kafka (Async): ${exception.message}" }
-				} else {
-					logger.info { "Successfully sent to Kafka: ${result?.recordMetadata}" }
-				}
+				exception
+					?.also { logger.error(it) { "Failed to send to Kafka (Async): ${it.message}" } }
+					?: logger.info { "Successfully sent to Kafka: ${result?.recordMetadata}" }
 			}
 		}.onFailure { exception ->
 			logger.error(exception) { "Failed to send message to Kafka (Sync): ${exception.message}" }
