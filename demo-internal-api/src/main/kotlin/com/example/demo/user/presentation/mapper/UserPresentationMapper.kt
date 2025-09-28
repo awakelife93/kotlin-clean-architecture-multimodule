@@ -18,11 +18,13 @@ import org.springframework.data.domain.Pageable
 
 object UserPresentationMapper {
 	fun toCreateUserInput(request: CreateUserRequest): CreateUserInput =
-		CreateUserInput(
-			name = request.name,
-			email = request.email,
-			password = request.password
-		)
+		with(request) {
+			CreateUserInput(
+				name = name,
+				email = email,
+				password = password
+			)
+		}
 
 	fun toGetUserByIdInput(userId: Long): GetUserByIdInput = GetUserByIdInput(userId = userId)
 
@@ -34,72 +36,86 @@ object UserPresentationMapper {
 		userId: Long,
 		request: UpdateUserRequest
 	): UpdateUserInput =
-		UpdateUserInput(
-			userId = userId,
-			name = request.name,
-			role = request.role
-		)
+		with(request) {
+			UpdateUserInput(
+				userId = userId,
+				name = name,
+				role = role
+			)
+		}
 
 	fun toUpdateMeInput(
 		userId: Long,
 		request: UpdateUserRequest
 	): UpdateMeInput =
-		UpdateMeInput(
-			userId = userId,
-			name = request.name
-		)
+		with(request) {
+			UpdateMeInput(
+				userId = userId,
+				name = name
+			)
+		}
 
 	fun toGetUserResponse(output: UserOutput.BaseUserOutput): GetUserResponse =
-		GetUserResponse(
-			userId = output.id,
-			name = output.name,
-			email = output.email,
-			role = output.role,
-			createDt = output.createdDt,
-			updateDt = output.updatedDt
-		)
+		with(output) {
+			GetUserResponse(
+				userId = id,
+				name = name,
+				email = email,
+				role = role,
+				createDt = createdDt,
+				updateDt = updatedDt
+			)
+		}
 
 	fun toCreateUserResponse(output: UserOutput.AuthenticatedUserOutput): CreateUserResponse =
-		CreateUserResponse(
-			userId = output.id,
-			name = output.name,
-			email = output.email,
-			role = output.role,
-			accessToken = output.accessToken,
-			createDt = output.createdDt,
-			updateDt = output.updatedDt
-		)
+		with(output) {
+			CreateUserResponse(
+				userId = id,
+				name = name,
+				email = email,
+				role = role,
+				accessToken = accessToken,
+				createDt = createdDt,
+				updateDt = updatedDt
+			)
+		}
 
 	fun toUpdateUserResponse(output: UserOutput.BaseUserOutput): UpdateUserResponse =
-		UpdateUserResponse(
-			userId = output.id,
-			name = output.name,
-			email = output.email,
-			role = output.role,
-			createDt = output.createdDt,
-			updateDt = output.updatedDt
-		)
+		with(output) {
+			UpdateUserResponse(
+				userId = id,
+				name = name,
+				email = email,
+				role = role,
+				createDt = createdDt,
+				updateDt = updatedDt
+			)
+		}
 
 	fun toUpdateMeResponse(output: UserOutput.AuthenticatedUserOutput): UpdateMeResponse =
-		UpdateMeResponse(
-			userId = output.id,
-			name = output.name,
-			email = output.email,
-			role = output.role,
-			accessToken = output.accessToken,
-			createDt = output.createdDt,
-			updateDt = output.updatedDt
-		)
+		with(output) {
+			UpdateMeResponse(
+				userId = id,
+				name = name,
+				email = email,
+				role = role,
+				accessToken = accessToken,
+				createDt = createdDt,
+				updateDt = updatedDt
+			)
+		}
 
 	fun toGetUserListResponse(output: UserOutput.UserPageListOutput): Page<GetUserResponse> =
 		output.users.map { userOutput ->
-			GetUserResponse(
-				userId = userOutput.id,
-				name = userOutput.name,
-				email = userOutput.email,
-				role = userOutput.role,
-				createDt = userOutput.createdDt,
-				updateDt = userOutput.updatedDt
-			)
+			with(userOutput) {
+				GetUserResponse(
+					userId = id,
+					name = name,
+					email = email,
+					role = role,
+					createDt = createdDt,
+					updateDt = updatedDt
+				)
+			}
 		}
 }

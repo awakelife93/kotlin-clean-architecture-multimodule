@@ -11,32 +11,37 @@ import com.example.demo.auth.presentation.dto.response.SignInResponse
 
 object AuthPresentationMapper {
 	fun toSignInInput(request: SignInRequest): SignInInput =
-		SignInInput(
-			email = request.email,
-			password = request.password
-		)
+		with(request) {
+			SignInInput(
+				email = email,
+				password = password
+			)
+		}
 
 	fun toSignInResponse(output: AuthOutput): SignInResponse =
-		SignInResponse(
-			accessToken = output.accessToken,
-			userId = output.userId,
-			role = output.role,
-			name = output.name,
-			email = output.email
-		)
+		with(output) {
+			SignInResponse(
+				accessToken = accessToken,
+				userId = userId,
+				role = role,
+				name = name,
+				email = email
+			)
+		}
 
 	fun toRefreshInput(request: RefreshAccessTokenRequest): RefreshAccessTokenInput =
-		RefreshAccessTokenInput(
-			refreshToken = request.refreshToken
-		)
+		with(request) {
+			RefreshAccessTokenInput(
+				refreshToken = refreshToken
+			)
+		}
 
 	fun toRefreshResponse(output: AuthOutput): RefreshAccessTokenResponse =
-		RefreshAccessTokenResponse(
-			accessToken = output.accessToken
-		)
+		with(output) {
+			RefreshAccessTokenResponse(
+				accessToken = accessToken
+			)
+		}
 
-	fun toSignOutInput(userId: Long): SignOutInput =
-		SignOutInput(
-			userId = userId
-		)
+	fun toSignOutInput(userId: Long): SignOutInput = SignOutInput(userId = userId)
 }

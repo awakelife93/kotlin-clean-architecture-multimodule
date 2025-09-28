@@ -20,25 +20,29 @@ object PostPresentationMapper {
 		request: CreatePostRequest,
 		userId: Long
 	): CreatePostInput =
-		CreatePostInput(
-			title = request.title,
-			subTitle = request.subTitle,
-			content = request.content,
-			userId = userId
-		)
+		with(request) {
+			CreatePostInput(
+				title = title,
+				subTitle = subTitle,
+				content = content,
+				userId = userId
+			)
+		}
 
 	fun toUpdatePostInput(
 		postId: Long,
 		request: UpdatePostRequest,
 		userId: Long
 	): UpdatePostInput =
-		UpdatePostInput(
-			postId = postId,
-			title = request.title,
-			subTitle = request.subTitle,
-			content = request.content,
-			userId = userId
-		)
+		with(request) {
+			UpdatePostInput(
+				postId = postId,
+				title = title,
+				subTitle = subTitle,
+				content = content,
+				userId = userId
+			)
+		}
 
 	fun toGetPostListInput(pageable: Pageable): GetPostListInput = GetPostListInput(pageable = pageable)
 
@@ -63,48 +67,56 @@ object PostPresentationMapper {
 		)
 
 	fun toCreatePostResponse(output: PostOutput.BasePostOutput): CreatePostResponse =
-		CreatePostResponse(
-			postId = output.id,
-			title = output.title,
-			subTitle = output.subTitle,
-			content = output.content,
-			userId = output.userId,
-			createDt = output.createdDt,
-			updateDt = output.updatedDt
-		)
+		with(output) {
+			CreatePostResponse(
+				postId = id,
+				title = title,
+				subTitle = subTitle,
+				content = content,
+				userId = userId,
+				createDt = createdDt,
+				updateDt = updatedDt
+			)
+		}
 
 	fun toUpdatePostResponse(output: PostOutput.BasePostOutput): UpdatePostResponse =
-		UpdatePostResponse(
-			postId = output.id,
-			title = output.title,
-			subTitle = output.subTitle,
-			content = output.content,
-			userId = output.userId,
-			createDt = output.createdDt,
-			updateDt = output.updatedDt
-		)
+		with(output) {
+			UpdatePostResponse(
+				postId = id,
+				title = title,
+				subTitle = subTitle,
+				content = content,
+				userId = userId,
+				createDt = createdDt,
+				updateDt = updatedDt
+			)
+		}
 
 	fun toGetPostResponse(output: PostOutput.BasePostOutput): GetPostResponse =
-		GetPostResponse(
-			postId = output.id,
-			title = output.title,
-			subTitle = output.subTitle,
-			content = output.content,
-			userId = output.userId,
-			createDt = output.createdDt,
-			updateDt = output.updatedDt
-		)
+		with(output) {
+			GetPostResponse(
+				postId = id,
+				title = title,
+				subTitle = subTitle,
+				content = content,
+				userId = userId,
+				createDt = createdDt,
+				updateDt = updatedDt
+			)
+		}
 
 	fun toGetPostListResponse(output: PostOutput.PostPageListOutput): Page<GetPostResponse> =
 		output.posts.map { post ->
-			GetPostResponse(
-				postId = post.id,
-				title = post.title,
-				subTitle = post.subTitle,
-				content = post.content,
-				userId = post.userId,
-				createDt = post.createdDt,
-				updateDt = post.updatedDt
-			)
+			with(post) {
+				GetPostResponse(
+					postId = id,
+					title = title,
+					subTitle = subTitle,
+					content = content,
+					userId = userId,
+					createDt = createdDt,
+					updateDt = updatedDt
+				)
+			}
 		}
 }
