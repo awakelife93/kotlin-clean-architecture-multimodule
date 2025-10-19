@@ -370,19 +370,12 @@ class PostServiceTests {
 		@DisplayName("Delete all posts by user ID")
 		fun should_delete_all_user_posts() {
 			val userId = 100L
-			val post1 = post.copy(id = 1L)
-			val post2 = post.copy(id = 2L)
-			val userPosts = listOf(post1, post2)
 
-			whenever(postPort.findAllByUserId(userId)) doReturn userPosts
-			doNothing().whenever(postPort).deleteById(1L)
-			doNothing().whenever(postPort).deleteById(2L)
+			doNothing().whenever(postPort).deleteByUserId(userId)
 
 			postService.deletePostsByUserId(userId)
 
-			verify(postPort, times(1)).findAllByUserId(userId)
-			verify(postPort, times(1)).deleteById(1L)
-			verify(postPort, times(1)).deleteById(2L)
+			verify(postPort, times(1)).deleteByUserId(userId)
 		}
 	}
 

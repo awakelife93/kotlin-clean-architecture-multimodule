@@ -195,22 +195,13 @@ class PostServiceTests :
 
 			When("Delete all posts by user ID") {
 				Then("All user's posts are deleted") {
-					val userPosts =
-						listOf(
-							createTestPost(id = 1L),
-							createTestPost(id = 2L)
-						)
-					every { postPort.findAllByUserId(100L) } returns userPosts
-					every { postPort.deleteById(1L) } returns Unit
-					every { postPort.deleteById(2L) } returns Unit
+					every { postPort.deleteByUserId(100L) } returns Unit
 
 					shouldNotThrow<Exception> {
 						postService.deletePostsByUserId(100L)
 					}
 
-					verify(exactly = 1) { postPort.findAllByUserId(100L) }
-					verify(exactly = 1) { postPort.deleteById(1L) }
-					verify(exactly = 1) { postPort.deleteById(2L) }
+					verify(exactly = 1) { postPort.deleteByUserId(100L) }
 				}
 			}
 		}

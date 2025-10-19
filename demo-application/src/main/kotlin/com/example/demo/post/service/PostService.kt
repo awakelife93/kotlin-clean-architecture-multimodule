@@ -89,10 +89,7 @@ class PostService(
 
 	@Transactional
 	fun deletePostsByUserId(userId: Long) {
-		val posts = postPort.findAllByUserId(userId)
-		posts.forEach { post ->
-			postPort.deleteById(post.id)
-		}
+		postPort.deleteByUserId(userId)
 	}
 
 	fun existsById(postId: Long): Boolean = postPort.existsById(postId)
