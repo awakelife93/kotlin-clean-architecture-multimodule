@@ -75,7 +75,7 @@ root/
 ├── gradle/                # Gradle configuration and version catalogs
 │   └── libs.versions.toml  # Centralized dependency version management
 ├── docker/                # Docker compose configurations
-└── monitoring/            # Monitoring configurations (Prometheus, Grafana)
+└── monitoring/            # Monitoring configurations (Prometheus, Grafana, Opentelemetry, Tempo)
 ```
 
 ## Technology Stack
@@ -135,7 +135,7 @@ root/
 
 #### Monitoring & Logging
 
-- Spring Actuator / Micrometer / Prometheus
+- Spring Actuator / Prometheus / Grafana / Opentelemetry / Tempo
 - Kotlin Logging / Logback
 - Sentry
 
@@ -450,8 +450,13 @@ Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListenerF
 
 ### 9. Monitoring & Observability
 
-- **Configuration**: [Grafana & Prometheus](monitoring/prometheus.yml)
-- **Actuator Settings**: [application-common.yml](demo-core/src/main/resources/application-common.yml)
+- **Configuration**
+	- [Grafana & Prometheus](monitoring/prometheus.yml)
+		- View traces via Grafana at http://localhost:3000 & Prometheus API at http://localhost:9090
+	- [Tempo & Opentelemetry](monitoring/tempo.yml)
+		- View traces via Grafana at http://localhost:3000 & Tempo API at http://tempo:3200 (Docker network)
+- **Actuator Settings**: [application-common.yml](demo-infrastructure/src/main/resources/application-infrastructure.yml)
+	- Opentelemetry, Prometheus integration
 
 > **Note**: Replace `{ip address}:8085` with your actual IP address for proper metrics collection
 
@@ -536,7 +541,12 @@ cd docker && ./setup.sh
 ### Monitoring Services
 
 - **Grafana** (Metrics Dashboard): http://localhost:3000
-- **Prometheus** (Metrics Collection): http://localhost:9090
+- **Prometheus** (Metrics Collection): Via Grafana http://localhost:3000
+	- API: http://localhost:9090
+- **Tempo** (Tracing): Via Grafana http://localhost:3000
+	- OTLP gRPC: localhost:4317
+	- OTLP HTTP: localhost:4318
+	- API: http://tempo:3200 (from within Docker network)
 
 ## Author
 
