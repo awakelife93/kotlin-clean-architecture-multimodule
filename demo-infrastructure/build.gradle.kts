@@ -29,6 +29,7 @@ dependencies {
 	implementation(libs.spring.boot.starter.mail)
 
 	implementation(libs.bundles.monitoring)
+	implementation(platform(libs.opentelemetry.bom))
 }
 
 tasks.test {

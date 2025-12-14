@@ -14,3 +14,21 @@ management:
       access: READ_ONLY
     metrics:
       access: READ_ONLY
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+    exporter:
+      otlp:
+        enabled: true
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317
+      protocol: grpc
+  traces:
+    exporter: otlp
+  logs:
+    exporter: none
+  metrics:
+    exporter: none

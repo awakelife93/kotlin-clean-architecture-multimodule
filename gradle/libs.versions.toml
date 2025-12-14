@@ -25,6 +25,8 @@ slack = "1.45.3"
 kotlin-logging = "7.0.0"
 sentry = "7.17.0"
 micrometer = "1.14.1"
+opentelemetry = "1.49.0"
+opentelemetry-spring = "2.15.0"
 
 # Documentation
 springdoc = "2.8.13"
@@ -102,6 +104,8 @@ springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-u
 sentry-spring-boot = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
 sentry-logback = { module = "io.sentry:sentry-logback", version.ref = "sentry" }
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+opentelemetry-bom = { module = "io.opentelemetry:opentelemetry-bom", version.ref = "opentelemetry" }
+opentelemetry-spring-boot-starter = { module = "io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter", version.ref = "opentelemetry-spring" }
 
 # External APIs
 slack-api-client = { module = "com.slack.api:slack-api-client", version.ref = "slack" }
@@ -160,7 +164,8 @@ database-h2 = [
 # Monitoring Bundles
 monitoring = [
 	"spring-boot-starter-actuator",
-	"micrometer-prometheus"
+	"micrometer-prometheus",
+	"opentelemetry-spring-boot-starter"
 ]
 
 sentry = [
