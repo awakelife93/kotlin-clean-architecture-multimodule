@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    volumes:
+      - ../../monitoring/loki.yml:/etc/loki/loki.yaml
+    ports:
+      - "3100:3100"
+    command:
+      - "--config.file=/etc/loki/loki.yaml"
