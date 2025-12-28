@@ -12,8 +12,7 @@ scrape_configs:
     static_configs:
       - targets: [ 'grafana:3000' ]
 
-  - job_name: 'spring-actuator'
-    metrics_path: '/actuator/prometheus'
-    scrape_interval: 1s
+  - job_name: 'otel-collector'
+    scrape_interval: 5s
     static_configs:
-      - targets: [ '{ip address}:8085' ]
+      - targets: [ 'otel-collector:8889' ]
