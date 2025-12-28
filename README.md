@@ -2,7 +2,7 @@
 
 ## Spring Boot (Kotlin) Clean Hexagonal Architecture - Multi-Module Template
 
-**Production-ready** | **Clean Architecture** | **Multi-Module** | **Test-Driven**
+**Production-ready** | **Clean Architecture** | **Multi-Module** | **Test-Driven** | **Observability**
 
 > **Original Repository**:
 > [https://github.com/awakelife93/spring-boot-kotlin-boilerplate](https://github.com/awakelife93/spring-boot-kotlin-boilerplate)
@@ -11,7 +11,8 @@
 **Hexagonal Architecture** and **Multi-Module** structure.
 
 A production-ready Spring Boot multi-module project template built with Kotlin. It follows **Hexagonal Architecture (Ports and Adapters)**
-principles and Domain-Driven Design (DDD) patterns to ensure maintainability, testability, and scalability.
+principles and Domain-Driven Design (DDD) patterns to ensure maintainability, testability, and scalability. The project includes a complete
+**OpenTelemetry-based observability stack** for unified monitoring, distributed tracing, and log aggregation.
 
 ## Architecture Overview
 
@@ -75,7 +76,7 @@ root/
 ├── gradle/                # Gradle configuration and version catalogs
 │   └── libs.versions.toml  # Centralized dependency version management
 ├── docker/                # Docker compose configurations
-└── monitoring/            # Monitoring configurations (Prometheus, Grafana, Opentelemetry, Tempo)
+└── monitoring/            # Monitoring configurations (Prometheus, Grafana, Opentelemetry Collector, Tempo, Loki)
 ```
 
 ## Technology Stack
@@ -135,9 +136,9 @@ root/
 
 #### Monitoring & Logging
 
-- Spring Actuator / Prometheus / Grafana / Opentelemetry / Tempo
-- Kotlin Logging / Logback
-- Sentry
+- **Observability Stack**: OpenTelemetry Collector, Prometheus, Grafana, Tempo, Loki
+- **Application Monitoring**: Spring Actuator, Sentry
+- **Logging**: Kotlin Logging, Logback
 
 ## Build Configuration
 
@@ -448,17 +449,26 @@ Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListenerF
 - [Hard delete after one year](demo-batch/src/main/kotlin/com/example/demo/batch/user/writer/UserDeleteItemWriter.kt)
 - [User deletion via Kafka](demo-infrastructure/src/main/kotlin/com/example/demo/kafka/adapter/UserDeleteKafkaAdapter.kt)
 
-### 9. Monitoring & Observability
+### 9. OpenTelemetry Stack Configuration (Monitoring & Observability)
 
-- **Configuration**
-	- [Grafana & Prometheus](monitoring/prometheus.yml)
-		- View traces via Grafana at http://localhost:3000 & Prometheus API at http://localhost:9090
-	- [Tempo & Opentelemetry](monitoring/tempo.yml)
-		- View traces via Grafana at http://localhost:3000 & Tempo API at http://tempo:3200 (Docker network)
-- **Actuator Settings**: [application-common.yml](demo-infrastructure/src/main/resources/application-infrastructure.yml)
-	- Opentelemetry, Prometheus integration
+**Architecture:**
+- All observability data (metrics, traces, logs) are collected through **OpenTelemetry Collector**
+- Spring Boot application uses **OpenTelemetry Spring Boot Starter** (SDK) to auto-instrument and send telemetry data
+- OpenTelemetry Collector routes data to Prometheus, Tempo, and Loki
 
-> **Note**: Replace `{ip address}:8085` with your actual IP address for proper metrics collection
+**Configuration Files:**
+- **OpenTelemetry Collector**: [otel-collector-config.yml](monitoring/otel-collector-config.yml)
+	- Receives: OTLP gRPC (localhost:4317), OTLP HTTP (localhost:4318)
+	- Exports to: Prometheus, Tempo, Loki
+- **Prometheus**: [prometheus.yml](monitoring/prometheus.yml) - Metrics collection
+- **Tempo**: [tempo.yml](monitoring/tempo.yml) - Distributed tracing
+- **Loki**: [loki.yml](monitoring/loki.yml) - Log aggregation
+- **Grafana**: Unified dashboard at http://localhost:3000
+
+**Application Settings:**
+- [application-infrastructure.yml](demo-infrastructure/src/main/resources/application-infrastructure.yml)
+	- OpenTelemetry exporter configuration (`management.otel.*`)
+	- Spring Actuator settings for observability
 
 ### 10. Docker & Infrastructure
 
@@ -533,20 +543,25 @@ cd docker && ./setup.sh
 - **MailHog** (Email Testing): http://localhost:8025
 - **PgAdmin** (PostgreSQL Management): http://localhost:8088
 - **Kafka UI** (Kafka Management): http://localhost:9000
-- **Redis**: localhost:6379 (CLI/Client access)
-- **PostgreSQL**: localhost:5432 (Database connection)
-- **Kafka**: localhost:9092 (Broker connection)
-- **Zookeeper**: localhost:2181 (Coordination service)
+- **Redis** (CLI/Client access): localhost:6379
+- **PostgreSQL** (Database connection): localhost:5432
+- **Kafka** (Broker connection): localhost:9092
+- **Zookeeper** (Coordination service): localhost:2181
 
-### Monitoring Services
+### Observability
 
-- **Grafana** (Metrics Dashboard): http://localhost:3000
-- **Prometheus** (Metrics Collection): Via Grafana http://localhost:3000
-	- API: http://localhost:9090
-- **Tempo** (Tracing): Via Grafana http://localhost:3000
-	- OTLP gRPC: localhost:4317
-	- OTLP HTTP: localhost:4318
-	- API: http://tempo:3200 (from within Docker network)
+- **Grafana** (Unified Observability Dashboard): http://localhost:3000
+	- Metrics (Prometheus), Traces (Tempo), Logs (Loki) visualization
+	- **Data Source Configuration** (use Docker internal network addresses):
+		- Prometheus: `http://prometheus:9090`
+		- Tempo: `http://tempo:3200`
+		- Loki: `http://loki:3100`
+- **Prometheus** (Metrics Collection): http://localhost:9090
+- **Tempo** (Distributed Tracing): http://localhost:3200
+- **Loki** (Log Aggregation): http://localhost:3100
+- **OpenTelemetry Collector**:
+	- gRPC: localhost:4317
+	- HTTP: localhost:4318
 
 ## Author
 
