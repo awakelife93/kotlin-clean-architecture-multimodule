@@ -31,6 +31,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -51,7 +52,7 @@ class UserController(
 	private val updateMeUseCase: UpdateMeUseCase,
 	private val deleteUserUseCase: DeleteUserUseCase
 ) {
-	@Operation(operationId = "getUserById", summary = "Get User", description = "Get User By User Id API")
+	@Operation(operationId = "getMe", summary = "Get Me", description = "Get My User Info API")
 	@ApiResponses(
 		value = [
 			ApiResponse(
@@ -64,11 +65,45 @@ class UserController(
 				content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
 			), ApiResponse(
 				responseCode = "404",
+				description = "User Not Found",
+				content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+			)
+		]
+	)
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@GetMapping("/me")
+	fun getMe(
+		@CurrentUser securityUserItem: SecurityUserItem
+	): ResponseEntity<GetUserResponse> {
+		val input = UserPresentationMapper.toGetUserByIdInput(securityUserItem.userId)
+		val userOutput = getUserByIdUseCase.execute(input)
+		val response = UserPresentationMapper.toGetUserResponse(userOutput)
+		return ResponseEntity.ok(response)
+	}
+
+	@Operation(operationId = "getUserById", summary = "Get User", description = "Get User By User Id API")
+	@ApiResponses(
+		value = [
+			ApiResponse(
+				responseCode = "200",
+				description = "OK",
+				content = arrayOf(Content(schema = Schema(implementation = GetUserResponse::class)))
+			), ApiResponse(
+				responseCode = "401",
+				description = "Full authentication is required to access this resource",
+				content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+			), ApiResponse(
+				responseCode = "403",
+				description = "Access Denied",
+				content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+			), ApiResponse(
+				responseCode = "404",
 				description = "User Not Found userId = {userId} or email = {email}",
 				content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
 			)
 		]
 	)
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/{userId}")
 	fun getUserById(
 		@PathVariable("userId", required = true) userId: Long
@@ -89,6 +124,7 @@ class UserController(
 			)
 		]
 	)
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping
 	fun getUserList(
 		@PageableDefault
@@ -154,9 +190,11 @@ class UserController(
 			)
 		]
 	)
+	@PreAuthorize("hasRole('ADMIN')")
 	@PatchMapping("/{userId}")
+	@NotifyOnRequest
 	fun updateUser(
-		@RequestBody @Valid @NotifyOnRequest updateUserRequest: UpdateUserRequest,
+		@RequestBody @Valid updateUserRequest: UpdateUserRequest,
 		@PathVariable("userId", required = true) userId: Long
 	): ResponseEntity<UpdateUserResponse> {
 		val input = UserPresentationMapper.toUpdateUserInput(userId, updateUserRequest)
@@ -187,9 +225,11 @@ class UserController(
 			)
 		]
 	)
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PatchMapping
+	@NotifyOnRequest
 	fun updateMe(
-		@RequestBody @Valid @NotifyOnRequest updateUserRequest: UpdateUserRequest,
+		@RequestBody @Valid updateUserRequest: UpdateUserRequest,
 		@CurrentUser securityUserItem: SecurityUserItem
 	): ResponseEntity<UpdateMeResponse> {
 		val input = UserPresentationMapper.toUpdateMeInput(securityUserItem.userId, updateUserRequest)
@@ -212,6 +252,7 @@ class UserController(
 			)
 		]
 	)
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{userId}")
 	fun deleteUser(
 		@PathVariable("userId", required = true) userId: Long
