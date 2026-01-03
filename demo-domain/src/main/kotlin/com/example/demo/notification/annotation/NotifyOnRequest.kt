@@ -1,5 +1,5 @@
 package com.example.demo.notification.annotation
 
-@Target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class NotifyOnRequest

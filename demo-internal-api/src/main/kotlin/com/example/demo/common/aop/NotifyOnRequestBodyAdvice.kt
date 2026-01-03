@@ -17,7 +17,10 @@ class NotifyOnRequestBodyAdvice(
 		methodParameter: MethodParameter,
 		targetType: Type,
 		converterType: Class<out HttpMessageConverter<*>>
-	): Boolean = methodParameter.hasParameterAnnotation(NotifyOnRequest::class.java)
+	): Boolean =
+		methodParameter.method
+			?.isAnnotationPresent(NotifyOnRequest::class.java)
+			?: false
 
 	override fun afterBodyRead(
 		body: Any,
