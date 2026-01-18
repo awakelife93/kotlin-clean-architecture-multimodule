@@ -3,6 +3,7 @@ package com.example.demo.security.config
 import com.example.demo.common.config.CorsConfig
 import com.example.demo.persistence.auth.provider.AuthProvider
 import com.example.demo.persistence.auth.provider.JWTProvider
+import com.example.demo.security.component.SecurityErrorResponseWriter
 import com.example.demo.security.filter.JWTAuthFilter
 import com.example.demo.security.handler.CustomAccessDeniedHandler
 import com.example.demo.security.handler.CustomAuthenticationEntryPoint
@@ -34,7 +35,8 @@ class LocalSecurityConfig(
 	private val jwtProvider: JWTProvider,
 	private val authProvider: AuthProvider,
 	private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
-	private val customAccessDeniedHandler: CustomAccessDeniedHandler
+	private val customAccessDeniedHandler: CustomAccessDeniedHandler,
+	private val securityErrorResponseWriter: SecurityErrorResponseWriter
 ) {
 	@Bean
 	@Throws(Exception::class)
@@ -63,7 +65,7 @@ class LocalSecurityConfig(
 
 				auth.anyRequest().authenticated()
 			}.addFilterBefore(
-				JWTAuthFilter(jwtProvider),
+				JWTAuthFilter(jwtProvider, securityErrorResponseWriter),
 				UsernamePasswordAuthenticationFilter::class.java
 			).headers { headers ->
 				headers.frameOptions { frameOptions ->

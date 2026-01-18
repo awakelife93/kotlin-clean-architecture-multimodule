@@ -3,6 +3,7 @@ package com.example.demo.security.config
 import com.example.demo.common.config.CorsConfig
 import com.example.demo.persistence.auth.provider.AuthProvider
 import com.example.demo.persistence.auth.provider.JWTProvider
+import com.example.demo.security.component.SecurityErrorResponseWriter
 import com.example.demo.security.filter.APIKeyAuthFilter
 import com.example.demo.security.filter.JWTAuthFilter
 import com.example.demo.security.handler.CustomAccessDeniedHandler
@@ -37,7 +38,8 @@ class SecurityConfig(
 	private val jwtProvider: JWTProvider,
 	private val authProvider: AuthProvider,
 	private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
-	private val customAccessDeniedHandler: CustomAccessDeniedHandler
+	private val customAccessDeniedHandler: CustomAccessDeniedHandler,
+	private val securityErrorResponseWriter: SecurityErrorResponseWriter
 ) {
 	@Bean
 	fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -67,10 +69,10 @@ class SecurityConfig(
 
 				auth.anyRequest().authenticated()
 			}.addFilterBefore(
-				JWTAuthFilter(jwtProvider),
+				JWTAuthFilter(jwtProvider, securityErrorResponseWriter),
 				UsernamePasswordAuthenticationFilter::class.java
 			).addFilterAfter(
-				APIKeyAuthFilter(authProvider),
+				APIKeyAuthFilter(authProvider, securityErrorResponseWriter),
 				UsernamePasswordAuthenticationFilter::class.java
 			).exceptionHandling { exception ->
 				exception

@@ -1,6 +1,7 @@
-package com.example.demo.kotest.common.utils
+package com.example.demo.kotest.security.component
 
-import com.example.demo.security.utils.SecurityUtils.sendErrorResponse
+import com.example.demo.security.component.SecurityErrorResponseWriter
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.annotation.Tags
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.justRun
@@ -14,15 +15,17 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
-class SecurityUtilsTests :
+class SecurityErrorResponseWriterTests :
 	DescribeSpec({
+		val objectMapper = ObjectMapper()
+		val securityErrorResponseWriter = SecurityErrorResponseWriter(objectMapper)
 		val mockHttpServletRequest = mockk<MockHttpServletRequest>(relaxed = true)
 		val mockHttpServletResponse = mockk<MockHttpServletResponse>(relaxed = true)
 
 		describe("Start Security Exception") {
 			val exception = RuntimeException("Test exception message")
 
-			context("Call sendErrorResponse method") {
+			context("Call writeErrorResponse method") {
 
 				it("Exception response to client") {
 
@@ -31,7 +34,7 @@ class SecurityUtilsTests :
 						mockHttpServletResponse.contentType = any<String>()
 					}
 
-					sendErrorResponse(
+					securityErrorResponseWriter.writeErrorResponse(
 						mockHttpServletRequest,
 						mockHttpServletResponse,
 						exception,
@@ -39,7 +42,7 @@ class SecurityUtilsTests :
 					)
 
 					verify(exactly = 1) {
-						sendErrorResponse(
+						securityErrorResponseWriter.writeErrorResponse(
 							mockHttpServletRequest,
 							mockHttpServletResponse,
 							exception,

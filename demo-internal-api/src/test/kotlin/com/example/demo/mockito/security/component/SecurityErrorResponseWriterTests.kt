@@ -1,6 +1,8 @@
-package com.example.demo.mockito.common.utils
+package com.example.demo.mockito.security.component
 
-import com.example.demo.security.utils.SecurityUtils.sendErrorResponse
+import com.example.demo.security.component.SecurityErrorResponseWriter
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -19,19 +21,27 @@ import java.io.StringWriter
 
 @ActiveProfiles("test")
 @Tag("mockito-unit-test")
-@DisplayName("Mockito Unit - Security Utils Test")
+@DisplayName("Mockito Unit - Security Error Response Writer Test")
 @ExtendWith(
 	MockitoExtension::class
 )
-class SecurityUtilsTests {
+class SecurityErrorResponseWriterTests {
 	@Mock
 	private lateinit var mockHttpServletRequest: MockHttpServletRequest
 
 	@Mock
 	private lateinit var mockHttpServletResponse: MockHttpServletResponse
 
+	private lateinit var securityErrorResponseWriter: SecurityErrorResponseWriter
+
+	@BeforeEach
+	fun setUp() {
+		val objectMapper = ObjectMapper()
+		securityErrorResponseWriter = SecurityErrorResponseWriter(objectMapper)
+	}
+
 	@Test
-	@DisplayName("Send Error Response Test")
+	@DisplayName("Write Error Response Test")
 	@Throws(Exception::class)
 	fun should_VerifyCallMethodsOfHttpServletResponse_when_GivenServletAndException() {
 		val exception = RuntimeException("Test exception message")
@@ -40,7 +50,7 @@ class SecurityUtilsTests {
 
 		whenever(mockHttpServletResponse.writer).thenReturn(printWriter)
 
-		sendErrorResponse(
+		securityErrorResponseWriter.writeErrorResponse(
 			mockHttpServletRequest,
 			mockHttpServletResponse,
 			exception,

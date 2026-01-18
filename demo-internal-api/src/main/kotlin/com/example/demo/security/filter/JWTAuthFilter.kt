@@ -1,7 +1,7 @@
 package com.example.demo.security.filter
 
 import com.example.demo.persistence.auth.provider.JWTProvider
-import com.example.demo.security.utils.SecurityUtils
+import com.example.demo.security.component.SecurityErrorResponseWriter
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
@@ -14,7 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
 class JWTAuthFilter(
-	private val jwtProvider: JWTProvider
+	private val jwtProvider: JWTProvider,
+	private val securityErrorResponseWriter: SecurityErrorResponseWriter
 ) : OncePerRequestFilter() {
 	companion object {
 		private const val BEARER_PREFIX = "Bearer "
@@ -67,6 +68,6 @@ class JWTAuthFilter(
 				else -> throw exception
 			}
 
-		SecurityUtils.sendErrorResponse(request, response, exception, errorMessage)
+		securityErrorResponseWriter.writeErrorResponse(request, response, exception, errorMessage)
 	}
 }
