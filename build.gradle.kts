@@ -49,17 +49,54 @@ subprojects {
 		}
 	}
 
-	dependencies {
-		// CVE-2025-48924 fix: Force commons-lang3 version globally
-		configurations.all {
-			resolutionStrategy.eachDependency {
-				if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
-					useVersion("3.18.0")
-					because("CVE-2025-48924 - Fix Uncontrolled Recursion vulnerability")
-				}
+	fun DependencyResolveDetails.applyCveFixes() {
+		when {
+			requested.group == "org.apache.commons" && requested.name == "commons-lang3" -> {
+				useVersion("3.18.0")
+				because("CVE-2025-48924")
+			}
+
+			// CVE-2025-66566 fix: org.lz4 is deprecated, use at.yawk.lz4 instead
+			requested.group == "org.lz4" && requested.name == "lz4-java" -> {
+				useTarget("at.yawk.lz4:lz4-java:1.10.3")
+				because("CVE-2025-66566 - Migrate to maintained fork")
+			}
+
+			requested.group == "ch.qos.logback" && requested.name.startsWith("logback") -> {
+				useVersion("1.5.26")
+				because("CVE-2026-1225")
+			}
+
+			requested.group == "io.netty" && requested.name.startsWith("netty-") -> {
+				useVersion("4.2.8.Final")
+				because("CVE-2025-67735")
+			}
+
+			requested.group == "org.springframework.security" && requested.name.startsWith("spring-security-") -> {
+				useVersion("6.5.7")
+				because("CVE-2025-41248")
+			}
+
+			requested.group == "org.apache.tomcat.embed" && requested.name.startsWith("tomcat-embed-") -> {
+				useVersion("11.0.18")
+				because("CVE-2025-55754")
+			}
+
+			requested.group == "org.springframework" && requested.name.startsWith("spring-") -> {
+				useVersion("6.2.15")
+				because("CVE-2025-41249")
 			}
 		}
+	}
 
+	// CVE fixes - must be outside dependencies block
+	configurations.all {
+		resolutionStrategy.eachDependency {
+			applyCveFixes()
+		}
+	}
+
+	dependencies {
 		if (project.name != "demo-core") {
 			api(project(":demo-core"))
 
