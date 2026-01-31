@@ -6,5 +6,9 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=demo
+      - GF_SECURITY_ADMIN_PASSWORD=demo
+      - GF_USERS_ALLOW_SIGN_UP=false
     depends_on:
       - prometheus
