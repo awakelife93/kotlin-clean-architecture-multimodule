@@ -180,15 +180,14 @@ val modulesUsingTestFixtures = listOf(
 
 **Security Vulnerability Management:**
 
+- All dependency vulnerabilities are centrally managed through the `applyCveFixes()` function in the root `build.gradle.kts`
+- CVE fixes are automatically applied to all subprojects during dependency resolution
+
 ```kotlin
-// CVE-2025-48924 fix: Force commons-lang3 version globally
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
-			useVersion("3.18.0")
-			because("CVE-2025-48924 - Fix Uncontrolled Recursion vulnerability")
-		}
-	}
+// Example: CVE fix implementation
+requested.group == "org.apache.commons" && requested.name == "commons-lang3" -> {
+	useVersion("3.18.0")
+	because("CVE-2025-48924")
 }
 ```
 
@@ -446,17 +445,19 @@ Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListenerF
 
 **User Cleanup Flow:**
 
-- [Hard delete after one year](demo-batch/src/main/kotlin/com/example/demo/batch/user/writer/UserDeleteItemWriter.kt)
+- [Hard delete after one year](demo-batch/src/main/kotlin/com/example/demo/user/writer/UserDeleteItemWriter.kt)
 - [User deletion via Kafka](demo-infrastructure/src/main/kotlin/com/example/demo/kafka/adapter/UserDeleteKafkaAdapter.kt)
 
 ### 9. OpenTelemetry Stack Configuration (Monitoring & Observability)
 
 **Architecture:**
+
 - All observability data (metrics, traces, logs) are collected through **OpenTelemetry Collector**
 - Spring Boot application uses **OpenTelemetry Spring Boot Starter** (SDK) to auto-instrument and send telemetry data
 - OpenTelemetry Collector routes data to Prometheus, Tempo, and Loki
 
 **Configuration Files:**
+
 - **OpenTelemetry Collector**: [otel-collector-config.yml](monitoring/otel-collector-config.yml)
 	- Receives: OTLP gRPC (localhost:4317), OTLP HTTP (localhost:4318)
 	- Exports to: Prometheus, Tempo, Loki
@@ -466,6 +467,7 @@ Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListenerF
 - **Grafana**: Unified dashboard at http://localhost:3000
 
 **Application Settings:**
+
 - [application-infrastructure.yml](demo-infrastructure/src/main/resources/application-infrastructure.yml)
 	- OpenTelemetry exporter configuration (`management.otel.*`)
 	- Spring Actuator settings for observability
@@ -551,6 +553,8 @@ cd docker && ./setup.sh
 ### Observability
 
 - **Grafana** (Unified Observability Dashboard): http://localhost:3000
+	- Username: `demo`
+	- Password: `demo`
 	- Metrics (Prometheus), Traces (Tempo), Logs (Loki) visualization
 	- **Data Source Configuration** (use Docker internal network addresses):
 		- Prometheus: `http://prometheus:9090`

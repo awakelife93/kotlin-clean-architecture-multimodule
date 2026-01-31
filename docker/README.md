@@ -41,6 +41,8 @@ docker/
 - **Loki**: Log aggregation system (Port: 3100)
 - **OpenTelemetry Collector**: Collects and exports telemetry data (gRPC: 4317, HTTP: 4318)
 - **Grafana**: Unified observability dashboard (Port: 3000)
+  - Username: `demo`
+  - Password: `demo`
 
 ### Network Configuration
 
