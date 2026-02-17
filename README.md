@@ -14,52 +14,130 @@ A production-ready Spring Boot multi-module project template built with Kotlin. 
 principles and Domain-Driven Design (DDD) patterns to ensure maintainability, testability, and scalability. The project includes a complete
 **OpenTelemetry-based observability stack** for unified monitoring, distributed tracing, and log aggregation.
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+	- [Prerequisites](#prerequisites)
+	- [Quick Start](#quick-start)
+- [Architecture Overview](#architecture-overview)
+	- [Hexagonal Architecture](#hexagonal-architecture-ports--adapters)
+	- [Cross-Cutting Concerns](#cross-cutting-concerns)
+	- [Multi-Module Structure](#multi-module-structure)
+- [Key Features](#key-features)
+	- [Database Management](#1-database-management)
+	- [Spring Batch Configuration](#2-spring-batch-configuration)
+	- [Webhook Integration](#3-webhook-integration)
+	- [Email Testing](#4-email-testing)
+	- [Code Quality Tools](#5-code-quality-tools)
+	- [Testing Strategies](#6-testing-strategies)
+	- [Kafka Integration](#7-kafka-integration)
+	- [Event-Driven Examples](#8-event-driven-examples)
+	- [OpenTelemetry Stack Configuration](#9-opentelemetry-stack-configuration-monitoring--observability)
+	- [Docker & Infrastructure](#10-docker--infrastructure)
+- [Technology Stack](#technology-stack)
+- [Build Configuration](#build-configuration)
+- [Development Commands](#development-commands)
+- [Hexagonal Architecture Implementation](#hexagonal-architecture-implementation)
+- [Configuration Management](#configuration-management)
+- [Service Access URLs](#service-access-urls)
+
+## Getting Started
+
+### Prerequisites
+
+- **Java 21** or higher
+- **Docker & Docker Compose** (for infrastructure services)
+- **Gradle 8.10** (wrapper included)
+
+### Quick Start
+
+#### 1. Start Infrastructure Services
+
+```bash
+cd docker && ./setup.sh
+```
+
+> **For detailed setup information**, see [Docker Setup Guide](docker/README.md) which explains:
+> - Network configuration and auto-creation
+> - Individual service management
+> - Service dependencies and startup order
+
+#### 2. Run the Application
+
+```bash
+./gradlew :demo-bootstrap:bootRun
+```
+
+#### 3. Verify Setup
+
+Application is running at http://localhost:8085
+
+See [Service Access URLs](#service-access-urls) for all available services.
+
 ## Architecture Overview
 
 ### Hexagonal Architecture (Ports & Adapters)
 
 ```
-                    ┌─────────────────────────────────────────────┐
-                    │          Driving Adapters (Input)           │
-                    │   demo-internal-api / demo-external-api     │
-                    │                demo-batch                   │
-                    └─────────────────────┬───────────────────────┘
-                                          │
-                             ┌────────────▼────────────┐
-                             │      Input Ports        │
-                             └────────────┬────────────┘
-                                          │
-                    ┌─────────────────────▼─────────────────────┐
-                    │              Application Core             │
-                    │                                           │
-                    │   ┌───────────────────────────────────┐   │
-                    │   │    demo-application (UseCases)    │   │
-                    │   │       • Business Logic            │   │
-                    │   │       • Orchestration             │   │
-                    │   └─────────────────┬─────────────────┘   │
-                    │                     │                     │
-                    │   ┌─────────────────▼─────────────────┐   │
-                    │   │      demo-domain (Entities)       │   │
-                    │   │       • Domain Models             │   │
-                    │   │       • Business Rules            │   │
-                    │   │       • Port Interfaces           │   │
-                    │   └───────────────────────────────────┘   │
-                    │                                           │
-                    └─────────────────────┬─────────────────────┘
-                                          │
-                             ┌────────────▼────────────┐
-                             │     Output Ports        │
-                             └────────────┬────────────┘
-                                          │
-                    ┌─────────────────────▼─────────────────────┐
-                    │         Driven Adapters (Output)          │
-                    │           demo-infrastructure             │
-                    │   • Database (JPA/PostgreSQL)             │
-                    │   • Cache (Redis)                         │
-                    │   • Message Queue (Kafka)                 │
-                    │   • Email Service                         │
-                    └───────────────────────────────────────────┘
+        ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+        │ Observability Layer (OpenTelemetry) — Spans All Layers  │
+        │               Metrics | Traces | Logs →                 │
+        │               Prometheus / Tempo / Loki                 │
+        │                                                         │
+        │ ┌─────────────────────────────────────────────────────┐ │
+        │ │                Driving Adapters (Input)             │ │
+        │ │  demo-internal-api / demo-external-api / demo-batch │ │
+        │ └──────────────────────────┬──────────────────────────┘ │
+        │                            │                            │
+        │                   ┌────────▼────────┐                   │
+        │                   │   Input Ports   │                   │
+        │                   └────────┬────────┘                   │
+        │                            │                            │
+        │ ┌──────────────────────────▼──────────────────────────┐ │
+        │ │                  Application Core                   │ │
+        │ │                                                     │ │
+        │ │   ┌───────────────────────────────────────────┐     │ │
+        │ │   │       demo-application (UseCases)         │     │ │
+        │ │   │            • Business Logic               │     │ │
+        │ │   │            • Orchestration                │     │ │
+        │ │   └──────────────────────┬────────────────────┘     │ │
+        │ │                          │                          │ │
+        │ │   ┌──────────────────────▼────────────────────┐     │ │
+        │ │   │          demo-domain (Entities)           │     │ │
+        │ │   │            • Domain Models                │     │ │
+        │ │   │            • Business Rules               │     │ │
+        │ │   │            • Port Interfaces              │     │ │
+        │ │   └───────────────────────────────────────────┘     │ │
+        │ │                                                     │ │
+        │ └──────────────────────────┬──────────────────────────┘ │
+        │                            │                            │
+        │                   ┌────────▼────────┐                   │
+        │                   │  Output Ports   │                   │
+        │                   └────────┬────────┘                   │
+        │                            │                            │
+        │ ┌──────────────────────────▼──────────────────────────┐ │
+        │ │               Driven Adapters (Output)              │ │
+        │ │                 demo-infrastructure                 │ │
+        │ │              • Database (JPA/PostgreSQL)            │ │
+        │ │              • Cache (Redis)                        │ │
+        │ │              • Message Queue (Kafka)                │ │
+        │ │              • Email Service                        │ │
+        │ └─────────────────────────────────────────────────────┘ │
+        │                                                         │
+        └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
 ```
+
+### Cross-Cutting Concerns
+
+The following concerns span across all architectural layers:
+
+**Observability** - Unified monitoring via OpenTelemetry (see Key Features #9)
+
+**Security** - Spring Security, JWT, RBAC (see Technology Stack section)
+
+**Logging** - Kotlin Logging, Logback (see Technology Stack section)
+
+**Error Handling** - Global exception handling, webhook notifications (Slack/Discord), Sentry integration
 
 ### Multi-Module Structure
 
@@ -76,7 +154,7 @@ root/
 ├── gradle/                # Gradle configuration and version catalogs
 │   └── libs.versions.toml  # Centralized dependency version management
 ├── docker/                # Docker compose configurations
-└── monitoring/            # Monitoring configurations (Prometheus, Grafana, Opentelemetry Collector, Tempo, Loki)
+└── monitoring/            # Monitoring configurations (Prometheus, Grafana, OpenTelemetry Collector, Tempo, Loki)
 ```
 
 ## Technology Stack
@@ -122,7 +200,6 @@ root/
 - JUnit 5 / Kotest
 - MockK / Mockito Kotlin & Mockito Inline
 - Spring Boot Test
-- Testcontainers (Integration testing)
 - Spring MockMvc
 
 #### Development Tools
@@ -142,7 +219,7 @@ root/
 
 ## Build Configuration
 
-### Multi-Module Structure
+### Gradle Multi-Module Setup
 
 The root `build.gradle.kts` manages all subprojects with shared configurations through `subprojects` block.
 
@@ -185,9 +262,11 @@ val modulesUsingTestFixtures = listOf(
 
 ```kotlin
 // Example: CVE fix implementation
-requested.group == "org.apache.commons" && requested.name == "commons-lang3" -> {
-	useVersion("3.18.0")
-	because("CVE-2025-48924")
+when {
+	requested.group == "org.apache.commons" && requested.name == "commons-lang3" -> {
+		useVersion("3.18.0")
+		because("CVE-2025-48924")
+	}
 }
 ```
 
@@ -200,6 +279,34 @@ if (project.name !in executableModules) {
 	tasks.named<BootJar>("bootJar") { enabled = false }
 	tasks.named<Jar>("jar") { enabled = true }
 }
+```
+
+## Development Commands
+
+### Build & Test
+
+```bash
+# Build all modules
+./gradlew build
+
+# Run tests
+./gradlew test
+
+# Run specific module tests
+./gradlew :demo-application:test
+```
+
+### Code Quality
+
+```bash
+# Run ktlint check
+./gradlew ktlintCheck
+
+# Format code with ktlint
+./gradlew ktlintFormat
+
+# Run detekt analysis
+./gradlew detekt
 ```
 
 ## Hexagonal Architecture Implementation
@@ -219,11 +326,11 @@ interface UserPort : UserCommandPort, UserQueryPort
 // demo-infrastructure/src/main/kotlin/com/example/demo/persistence/user/adapter/UserRepositoryAdapter.kt
 @Repository
 class UserRepositoryAdapter(
-	private val jpaRepository: UserJpaRepository,
+	private val userJpaRepository: UserJpaRepository,
 	private val userMapper: UserMapper
 ) : UserPort {
 	override fun findOneById(userId: Long): User? =
-		jpaRepository.findOneById(userId)?.let {
+		userJpaRepository.findOneById(userId)?.let {
 			userMapper.toDomain(it)
 		}
 	// ... other implementations
@@ -254,8 +361,10 @@ class CreateUserUseCase(
 class UserController(
 	private val createUserUseCase: CreateUserUseCase
 ) {
-	@PostMapping
-	fun createUser(@RequestBody @Valid createUserRequest: CreateUserRequest): UserResponse {
+	@PostMapping("/register")
+	fun createUser(
+		@RequestBody @Valid createUserRequest: CreateUserRequest
+	): ResponseEntity<CreateUserResponse> {
 		val input = UserPresentationMapper.toCreateUserInput(createUserRequest)
 		val userOutput = createUserUseCase.execute(input)
 
@@ -301,9 +410,18 @@ demo-core/src/main/resources/
 ├── application-dev.yml                    # Development environment
 ├── application-prod.yml                   # Production environment
 ├── application-local.yml                  # Local development
+├── application-test.yml                   # Test environment
 ├── application-secret-local.yml           # Local secrets
 ├── application-secret-dev.yml             # Development secrets
 └── application-secret-prod.yml            # Production secrets
+
+demo-core/src/testFixtures/
+├── kotlin/.../demo/
+│   ├── TestApplication.kt                 # Test application entry point
+│   └── config/
+│       └── KotestSpringConfig.kt          # Kotest Spring configuration
+└── resources/
+    └── kotest.properties                  # Kotest settings (copied to modulesUsingTestFixtures)
 ```
 
 #### 3. Configuration Import Strategy
@@ -375,7 +493,7 @@ This ensures environment settings always take precedence over module defaults.
 
 ### 3. Webhook Integration
 
-- **Configuration**: [enable & route endpoint](demo-core/src/main/resources/application-common.yml) (default enabled)
+- **Configuration**: [enable & route endpoint](demo-external-api/src/main/resources/application-external-api.yml) (default enabled)
 - **Supported Types**: Slack, Discord
 
 ```kotlin
@@ -477,95 +595,44 @@ Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListenerF
 - Complete Docker Compose setup for all services
 - Detailed setup guide: [Docker Setup Guide](docker/README.md)
 
-## Getting Started
-
-### Prerequisites
-
-- **Java 21** or higher
-- **Docker & Docker Compose** (for infrastructure services)
-- **Gradle 8.10** (wrapper included)
-
-### Quick Start
-
-#### 1. Start Infrastructure Services
-
-```bash
-cd docker && ./setup.sh
-```
-
-> **For detailed setup information**, see [Docker Setup Guide](docker/README.md) which explains:
-> - Network configuration and auto-creation
-> - Individual service management
-> - Service dependencies and startup order
-
-#### 2. Run the Application
-
-```bash
-./gradlew :demo-bootstrap:bootRun
-```
-
-## Development Commands
-
-### Build & Test
-
-```bash
-# Build all modules
-./gradlew build
-
-# Run tests
-./gradlew test
-
-# Run specific module tests
-./gradlew :demo-application:test
-```
-
-### Code Quality
-
-```bash
-# Run ktlint check
-./gradlew ktlintCheck
-
-# Format code with ktlint
-./gradlew ktlintFormat
-
-# Run detekt analysis
-./gradlew detekt
-```
-
 ## Service Access URLs
 
 ### Application Services
 
-- **API Documentation (Swagger)**: http://localhost:8085/swagger-ui/index.html
-- **H2 Console** (local environment): http://localhost:8085/h2-console
-- **Application Server**: http://localhost:8085
+| Service            | URL                                         | Description                   |
+|--------------------|---------------------------------------------|-------------------------------|
+| API Documentation  | http://localhost:8085/swagger-ui/index.html | Swagger UI for API testing    |
+| H2 Console         | http://localhost:8085/h2-console            | Database console (local only) |
+| Application Server | http://localhost:8085                       | Main application endpoint     |
 
 ### Infrastructure Services
 
-- **MailHog** (Email Testing): http://localhost:8025
-- **PgAdmin** (PostgreSQL Management): http://localhost:8088
-- **Kafka UI** (Kafka Management): http://localhost:9000
-- **Redis** (CLI/Client access): localhost:6379
-- **PostgreSQL** (Database connection): localhost:5432
-- **Kafka** (Broker connection): localhost:9092
-- **Zookeeper** (Coordination service): localhost:2181
+| Service      | URL                   | Description             |
+|--------------|-----------------------|-------------------------|
+| MailHog      | http://localhost:8025 | Email testing interface |
+| PgAdmin      | http://localhost:8088 | PostgreSQL management   |
+| Kafka UI     | http://localhost:9000 | Kafka topic management  |
+| Redis        | localhost:6379        | Redis CLI/Client access |
+| PostgreSQL   | localhost:5432        | Database connection     |
+| Kafka Broker | localhost:9092        | Kafka broker connection |
+| Zookeeper    | localhost:2181        | Coordination service    |
 
 ### Observability
 
-- **Grafana** (Unified Observability Dashboard): http://localhost:3000
-	- Username: `demo`
-	- Password: `demo`
-	- Metrics (Prometheus), Traces (Tempo), Logs (Loki) visualization
-	- **Data Source Configuration** (use Docker internal network addresses):
-		- Prometheus: `http://prometheus:9090`
-		- Tempo: `http://tempo:3200`
-		- Loki: `http://loki:3100`
-- **Prometheus** (Metrics Collection): http://localhost:9090
-- **Tempo** (Distributed Tracing): http://localhost:3200
-- **Loki** (Log Aggregation): http://localhost:3100
-- **OpenTelemetry Collector**:
-	- gRPC: localhost:4317
-	- HTTP: localhost:4318
+| Service               | URL                   | Credentials | Description                     |
+|-----------------------|-----------------------|-------------|---------------------------------|
+| Grafana               | http://localhost:3000 | demo / demo | Unified observability dashboard |
+| Prometheus            | http://localhost:9090 | -           | Metrics collection              |
+| Tempo                 | http://localhost:3200 | -           | Distributed tracing             |
+| Loki                  | http://localhost:3100 | -           | Log aggregation                 |
+| OTLP Collector (gRPC) | localhost:4317        | -           | OpenTelemetry gRPC endpoint     |
+| OTLP Collector (HTTP) | localhost:4318        | -           | OpenTelemetry HTTP endpoint     |
+
+**Grafana Data Source Configuration** (use Docker internal network addresses):
+
+- Prometheus: `http://prometheus:9090`
+- Tempo: `http://tempo:3200`
+- Loki: `http://loki:3100`
 
 ## Author
 

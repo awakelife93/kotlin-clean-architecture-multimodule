@@ -1,6 +1,7 @@
 # Docker Compose Setup
 
-This project is composed of several independent Docker services such as PostgreSQL, Redis, Kafka, Prometheus, Tempo, Loki, OpenTelemetry Collector and Grafana.
+This project is composed of several independent Docker services such as PostgreSQL, Redis, Kafka, Prometheus, Tempo, Loki, OpenTelemetry
+Collector and Grafana.
 To make it easier to manage and run all containers at once, we use a script-based approach with multiple Compose files.
 
 ## Structure
@@ -29,20 +30,19 @@ docker/
 
 - **PostgreSQL**: Database service (Port: 5432)
 - **Redis**: Cache service (Port: 6379)
-- **PgAdmin**: PostgreSQL web management tool (Port: 8088)
+- **PgAdmin**: PostgreSQL web management tool (Port: 8088) — *depends on: PostgreSQL*
 - **MailHog**: Email testing service (SMTP Port: 1025, Web UI: 8025)
 - **Kafka & Zookeeper**: Message broker and coordination service (Kafka: 9092, Zookeeper: 2181)
-- **Kafka UI**: Kafka web management tool (Port: 9000)
+- **Kafka UI**: Kafka web management tool (Port: 9000) — *depends on: Kafka*
 
 ### Monitoring Services
 
 - **Prometheus**: Metrics collection and storage (Port: 9090)
 - **Tempo**: Distributed tracing system (Port: 3200)
 - **Loki**: Log aggregation system (Port: 3100)
-- **OpenTelemetry Collector**: Collects and exports telemetry data (gRPC: 4317, HTTP: 4318)
-- **Grafana**: Unified observability dashboard (Port: 3000)
-  - Username: `demo`
-  - Password: `demo`
+- **OpenTelemetry Collector**: Collects and exports telemetry data (gRPC: 4317, HTTP: 4318) — *depends on: Prometheus, Tempo, Loki*
+- **Grafana**: Unified observability dashboard (Port: 3000) — *depends on: Prometheus, Tempo, Loki*
+	- Credentials: See [Service Access URLs](../README.md#observability) in main README
 
 ### Network Configuration
 
