@@ -13,7 +13,7 @@ class UserDeleteItemRowMapper : RowMapper<UserDeleteItem> {
 		rowNumber: Int
 	): UserDeleteItem {
 		val user =
-			UserDeleteItem.of(
+			UserDeleteItem(
 				resultSet.getLong("id"),
 				resultSet.getString("email"),
 				resultSet.getString("name"),

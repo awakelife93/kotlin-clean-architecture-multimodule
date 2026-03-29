@@ -44,7 +44,7 @@ class MailHelperTests {
 	@Test
 	fun `should send email with correct values`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "user@example.com",
 				subject = "Test Subject",
 				body = "Test Body"
@@ -64,7 +64,7 @@ class MailHelperTests {
 	@Test
 	fun `should throw exception for invalid email`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "invalid-email",
 				subject = "Subject",
 				body = "Body"
@@ -86,7 +86,7 @@ class MailHelperTests {
 	@Test
 	fun `should call sendCriticalAlert on mail sending failure`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "user@example.com",
 				subject = "Test Subject",
 				body = "Test Body"
@@ -119,7 +119,7 @@ class MailHelperTests {
 	@DisplayName("should throw exception for empty email")
 	fun `should throw exception for empty email`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "",
 				subject = "Subject",
 				body = "Body"
@@ -138,7 +138,7 @@ class MailHelperTests {
 	@DisplayName("should throw exception for blank email with spaces")
 	fun `should throw exception for blank email with spaces`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "   ",
 				subject = "Subject",
 				body = "Body"
@@ -157,7 +157,7 @@ class MailHelperTests {
 	@DisplayName("should throw exception for empty subject")
 	fun `should throw exception for empty subject`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = "",
 				body = "Body"
@@ -176,7 +176,7 @@ class MailHelperTests {
 	@DisplayName("should throw exception for blank subject with spaces")
 	fun `should throw exception for blank subject with spaces`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = "   ",
 				body = "Body"
@@ -195,7 +195,7 @@ class MailHelperTests {
 	@DisplayName("should throw exception for empty body")
 	fun `should throw exception for empty body`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = "Subject",
 				body = ""
@@ -214,7 +214,7 @@ class MailHelperTests {
 	@DisplayName("should throw exception for blank body with spaces")
 	fun `should throw exception for blank body with spaces`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = "Subject",
 				body = "   "
@@ -233,7 +233,7 @@ class MailHelperTests {
 	@DisplayName("should throw exception with multiple validation errors")
 	fun `should throw exception with multiple validation errors`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "invalid-email",
 				subject = "",
 				body = ""
@@ -264,7 +264,7 @@ class MailHelperTests {
 
 		validEmails.forEach { email ->
 			val payload =
-				MailPayload.of(
+				MailPayload(
 					to = email,
 					subject = "Test",
 					body = "Test"
@@ -280,7 +280,7 @@ class MailHelperTests {
 	@DisplayName("should handle special characters in subject and body")
 	fun `should handle special characters in subject and body`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = "Special chars: !@#$%^&*()_+-=[]{}|;':\",./<>?",
 				body = "Unicode: emoji 😀🎉\nNew line\tTab"
@@ -303,7 +303,7 @@ class MailHelperTests {
 		val longBody = "Body content ".repeat(1000)
 
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = longSubject,
 				body = longBody
@@ -323,7 +323,7 @@ class MailHelperTests {
 	@DisplayName("should handle network timeout during mail sending")
 	fun `should handle network timeout during mail sending`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = "Test",
 				body = "Test"
@@ -359,7 +359,7 @@ class MailHelperTests {
 	@DisplayName("should handle mail server authentication failure")
 	fun `should handle mail server authentication failure`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "test@example.com",
 				subject = "Test",
 				body = "Test"
@@ -395,7 +395,7 @@ class MailHelperTests {
 	@DisplayName("should reject email without domain")
 	fun `should reject email without domain`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "user@",
 				subject = "Subject",
 				body = "Body"
@@ -414,7 +414,7 @@ class MailHelperTests {
 	@DisplayName("should reject email with multiple @ symbols")
 	fun `should reject email with multiple @ symbols`() {
 		val payload =
-			MailPayload.of(
+			MailPayload(
 				to = "user@@example.com",
 				subject = "Subject",
 				body = "Body"

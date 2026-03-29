@@ -24,7 +24,7 @@ class UserEventHandler(
 
 		runCatching {
 			val payload =
-				MailPayload.of(
+				MailPayload(
 					to = welcomeSignUpEvent.email,
 					subject = "Welcome ${welcomeSignUpEvent.name}!",
 					body = "Welcome to our service! Thank you for signing up."

@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration
 @OpenAPIDefinition(
 	info =
 		Info(
-			title = "Spring Boot Boilerplate",
-			description = "Spring Boot Boilerplate API Docs",
+			title = "Kotlin Clean Architecture Multi-Module - Spring Boot Boilerplate",
+			description = "Kotlin Clean Architecture Multi-Module - Spring Boot Boilerplate API Docs",
 			version = "v1"
 		)
 )
