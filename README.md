@@ -1,3 +1,5 @@
+
+
 # Kotlin Clean Architecture Multi-Module
 
 ## Spring Boot (Kotlin) Clean Hexagonal Architecture - Multi-Module Template
@@ -523,7 +525,7 @@ webHookProvider.sendDiscord(
 
 - **Ktlint**: Official lint rules, configuration in [.editorconfig](.editorconfig)
 	- Report output: `build/reports/ktlint`
-- **Detekt**: Static analysis, rules in [detekt.yml](detekt.yml)
+- **Detekt**: Static analysis, rules in [detekt.yml](detekt.yml) (configured max line length: 170)
 	- Report output: `build/reports/detekt`
 
 ### 6. Testing Strategies
